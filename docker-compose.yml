@@ -1,0 +1,13 @@
+services:
+  telegram-bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: telegram_sheets_bot
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      # Optional: mount local tzdata to sync container timezone with host
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro

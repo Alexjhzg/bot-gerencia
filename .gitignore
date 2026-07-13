@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.env
+*.log
+npm-debug.log*
+.DS_Store
+*.xlsx
+acividades-d87dfb92891b.json

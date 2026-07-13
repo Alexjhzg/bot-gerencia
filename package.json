@@ -1,0 +1,30 @@
+{
+  "name": "telegram-sheets-bot",
+  "version": "1.0.0",
+  "description": "Telegram Bot for daily report ingestion into Google Sheets using grammY, TypeScript, and Docker",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "nodemon --watch src --ext ts --exec ts-node src/index.ts",
+    "test-parse": "ts-node src/scripts/test-parser.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "googleapis": "^140.0.1",
+    "grammy": "^1.23.0",
+    "node-cron": "^4.6.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.9",
+    "@types/node-cron": "^3.0.11",
+    "nodemon": "^3.1.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.2"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "private": true
+}
