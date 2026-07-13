@@ -6,14 +6,17 @@ if (process.env.NODE_ENV !== 'production') {
   dotenv.config({ path: path.resolve(__dirname, '../.env') });
 }
 
+// Fallback to Venezuela timezone if TZ is not defined in the environment
+process.env.TZ = process.env.TZ || 'America/Caracas';
+
 export interface Config {
   telegramToken: string;
   sheetId: string;
   sheetRange: string;
   googleEmail: string;
   googlePrivateKey: string;
-  shift1Limit: string; // e.g. "12:30"
-  shift2Limit: string; // e.g. "18:30"
+  shift1Limit: string; // e.g. "12:00"
+  shift2Limit: string; // e.g. "18:00"
   managerChatId?: string;
 }
 
@@ -37,7 +40,8 @@ export const config: Config = {
   sheetRange: process.env.GOOGLE_SHEET_RANGE || 'Sheet1!A:D',
   googleEmail: getEnvOrThrow('GOOGLE_SERVICE_ACCOUNT_EMAIL'),
   googlePrivateKey: getPrivateKey(),
-  shift1Limit: process.env.SHIFT_1_LIMIT || '12:30',
-  shift2Limit: process.env.SHIFT_2_LIMIT || '18:30',
+  shift1Limit: process.env.SHIFT_1_LIMIT || '12:00',
+  shift2Limit: process.env.SHIFT_2_LIMIT || '18:00',
   managerChatId: process.env.MANAGER_CHAT_ID ? process.env.MANAGER_CHAT_ID.trim() : undefined,
 };
+
