@@ -74,7 +74,12 @@ export async function consolidationHandler(ctx: BotContext) {
       } else if (trimmed === '1' || trimmed.toLowerCase().includes('12') || trimmed.toLowerCase().includes('m')) {
         isShift1 = true;
         shiftOverridden = true;
-      } else if (trimmed === '2' || trimmed.toLowerCase().includes('6') || trimmed.toLowerCase().includes('pm')) {
+      } else if (
+        trimmed === '2' ||
+        trimmed.toLowerCase().includes('5') ||
+        trimmed.toLowerCase().includes('6') ||
+        trimmed.toLowerCase().includes('pm')
+      ) {
         isShift1 = false;
         shiftOverridden = true;
       }

@@ -33,7 +33,7 @@ El bot procesa mensajes bajo las siguientes reglas de lectura de texto:
 El destino principal de escritura es la pestaña **`Reportes`**, la cual sigue una cuadrícula bidimensional estructurada:
 
 * **Fila 1:** Encabezados con las fechas combinadas de dos en dos, bajo el formato `DÍA DD/M/YY` (ej. `JUEVES 09/7/26`, sin ceros a la izquierda en el mes).
-* **Fila 2:** Columnas de Turnos: `12:00M` y `6:00 PM`.
+* **Fila 2:** Columnas de Turnos: `12:00M` y `5:00 PM` (soporta `6:00 PM` en registros históricos).
 * **Columna A (Filas 3 a 19):** Nombres de los departamentos oficiales en orden.
 * **Intersección (Celdas):** Texto concatenado con las actividades de la unidad correspondiente para ese turno del día.
 
@@ -43,7 +43,7 @@ El destino principal de escritura es la pestaña **`Reportes`**, la cual sigue u
 
 ### A. Detección y Expansión Dinámica de Columnas
 * **Regla:** Al recibir un reporte, el bot busca si ya existe el bloque de columnas correspondiente al día de hoy (`DD/M/YY`) y al turno activo.
-* **Acción:** Si es un día nuevo o no se localiza la columna, el bot **crea automáticamente 2 nuevas columnas** al final de la hoja (para `12:00M` y `6:00 PM`), escribe las cabeceras correspondientes, combina el bloque de la Fila 1 y, en caso de superar el límite de cuadrícula de Sheets (ej. 51 columnas), **redimensiona dinámicamente el número de columnas de la hoja** de forma transparente.
+* **Acción:** Si es un día nuevo o no se localiza la columna, el bot **crea automáticamente 2 nuevas columnas** al final de la hoja (para `12:00M` y `5:00 PM`), escribe las cabeceras correspondientes, combina el bloque de la Fila 1 y, en caso de superar el límite de cuadrícula de Sheets (ej. 51 columnas), **redimensiona dinámicamente el número de columnas de la hoja** de forma transparente.
 
 ### B. Reacción con Emojis
 * **Regla (Éxito):** Al guardar/actualizar la celda, el bot añade una reacción de **pulgar arriba (👍)** sobre el mensaje del reporte.
@@ -84,8 +84,8 @@ El bot administra las celdas basadas en ventanas horarias y permite correcciones
 
 ### A. Turnos y Horarios Oficiales (Configurables)
 * **Turno 1 (Mediodía):** Desde las **00:00 AM hasta las 12:00 PM**. Mapea a la columna del turno `12:00M`.
-* **Turno 2 (Tarde):** Desde las **12:01 PM hasta las 6:00 PM (18:00)**. Mapea a la columna del turno `6:00 PM`.
-* **Fuera de Horario:** Reportes enviados a partir de las 18:01 son automáticamente rechazados.
+* **Turno 2 (Tarde):** Desde las **12:01 PM hasta las 5:00 PM (17:00)**. Mapea a la columna del turno `5:00 PM`.
+* **Fuera de Horario:** Reportes enviados a partir de las 17:01 son automáticamente rechazados.
 
 ### B. Sobrescritura de Celda (Correcciones)
 * Al ser celdas de intersección fijas por día y turno, el bot siempre realiza una sobrescritura de celda.
@@ -100,7 +100,7 @@ El bot incluye un comando para generar resúmenes de actividades listos para ser
 * **Gatillador:** `/reporte` (enviado en el chat del bot).
 * **Parámetros Opcionales:**
   - `/reporte 1` o `/reporte 12` fuerza la consolidación del Turno 1 (`12:00M`).
-  - `/reporte 2` o `/reporte 6` fuerza la consolidación del Turno 2 (`6:00 PM`).
+  - `/reporte 2`, `/reporte 5` o `/reporte 6` fuerza la consolidación del Turno 2 (`5:00 PM`).
   - Si se envía sin parámetros, el bot detecta el turno activo actual de manera inteligente.
 * **Flujo de Consolidado:**
   - Ubica la columna del día de hoy y el turno requerido en la pestaña `Reportes`.

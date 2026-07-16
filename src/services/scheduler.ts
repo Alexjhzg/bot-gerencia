@@ -14,7 +14,7 @@ export async function sendConsolidatedToManager(isShift1: boolean) {
     return;
   }
 
-  const shiftLabel = isShift1 ? '12:00M' : '6:00 PM';
+  const shiftLabel = isShift1 ? '12:00M' : '5:00 PM';
   console.log(`[Scheduler] Generating automatic consolidated report for Shift ${shiftLabel} to send to Manager (Chat ID: ${managerChatId})...`);
 
   try {
@@ -46,10 +46,10 @@ export function startScheduler() {
     sendConsolidatedToManager(true);
   });
 
-  // Shift 2: Daily at 6:01 PM (1 minute after 6:00 PM / 18:00 cutoff)
-  cron.schedule('01 18 * * *', () => {
+  // Shift 2: Daily at 5:01 PM (1 minute after 5:00 PM / 17:00 cutoff)
+  cron.schedule('01 17 * * *', () => {
     sendConsolidatedToManager(false);
   });
 
-  console.log('[Scheduler] Cron jobs scheduled for 12:01 PM and 6:01 PM daily.');
+  console.log('[Scheduler] Cron jobs scheduled for 12:01 PM and 5:01 PM daily.');
 }

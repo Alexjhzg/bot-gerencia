@@ -229,7 +229,7 @@ export class SheetsService {
             targetColIndex = c;
             break;
           }
-          if (!isShift1 && colShift === '6:00PM') {
+          if (!isShift1 && (colShift === '5:00PM' || colShift === '6:00PM')) {
             targetColIndex = c;
             break;
           }
@@ -281,7 +281,7 @@ export class SheetsService {
           requestBody: {
             values: [
               [todayStr, ''],
-              ['12:00M', '6:00PM']
+              ['12:00M', '5:00PM']
             ]
           }
         });
@@ -406,7 +406,7 @@ export class SheetsService {
             targetColIndex = c;
             break;
           }
-          if (!isShift1 && colShift === '6:00PM') {
+          if (!isShift1 && (colShift === '5:00PM' || colShift === '6:00PM')) {
             targetColIndex = c;
             break;
           }
@@ -414,7 +414,7 @@ export class SheetsService {
       }
 
       if (targetColIndex === -1) {
-        const formattedShiftName = isShift1 ? '12:00M' : '6:00 PM';
+        const formattedShiftName = isShift1 ? '12:00M' : '5:00 PM';
         const displayDate = customDateStr ? customDateStr : 'de hoy';
         throw new Error(`No se han encontrado registros en la matriz para el Turno ${formattedShiftName} del día ${displayDate}.`);
       }
@@ -438,7 +438,7 @@ export class SheetsService {
       }
 
       const spanishDateStr = this.formatSpanishDateFromMatrix(actualDateHeader || searchDateStr);
-      const shiftHeader = isShift1 ? '1ER REPORTE 12:00M' : '2DO REPORTE 6:00PM';
+      const shiftHeader = isShift1 ? '1ER REPORTE 12:00M' : '2DO REPORTE 5:00PM';
 
       let reportLines: string[] = [
         'MONAGAS',
@@ -594,7 +594,7 @@ export class SheetsService {
             targetColIndex = c;
             break;
           }
-          if (!isShift1 && colShift === '6:00PM') {
+          if (!isShift1 && (colShift === '5:00PM' || colShift === '6:00PM')) {
             targetColIndex = c;
             break;
           }
