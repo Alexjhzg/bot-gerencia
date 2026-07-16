@@ -47,8 +47,8 @@ bot.command('unidades', unidadesHandler);
 // Command to check report submission status
 bot.command('estatus', estatusHandler);
 
-// Register the regex handler. Matches messages containing a line starting with "Reporte diario" or "📌Unidad:"
-bot.hears(/^(reporte diario|📌\s*unidad)/im, reportHandler);
+// Register the regex handler. Matches messages containing a line starting with "Reporte diario", "📌", or "+"
+bot.hears(/^(reporte diario|📌|\+)/im, reportHandler);
 
 
 

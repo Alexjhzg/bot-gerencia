@@ -17,6 +17,15 @@ export async function reportHandler(ctx: BotContext) {
   const text = ctx.message?.text;
   if (!text) return;
 
+  // Silent Filter (Group chat protection):
+  // Ignore messages starting with + or 📌 that do not contain "reporte diario" and have no lines starting with bullet points.
+  const hasReportDiario = /reporte diario/i.test(text);
+  const hasBullets = /^[-*•▪️▪▫\u25AA\uFE0F\u25FC\u25FD\u25FE\u25FF\u2B1B\u2B1C\u2B1D\u2B1E]/mu.test(text);
+
+  if (!hasReportDiario && !hasBullets) {
+    return;
+  }
+
   const user = getUserString(ctx);
   console.log(`[Bot] [Report] Inicia procesamiento de reporte enviado por ${user}`);
 
@@ -91,7 +100,7 @@ export async function reportHandler(ctx: BotContext) {
       throw new Error(
         `Las siguientes unidades no están registradas en la matriz de Reportes:\n${invalidListStr}\n\n` +
         `*Unidades autorizadas en la matriz:*\n${allowedList}\n\n` +
-        `⚠️ _Por favor, corrige la ortografía después de 📌Unidad: o del signo +._`
+        `⚠️ _Por favor, corrige la ortografía después de 📌 o del signo +._`
       );
     }
 

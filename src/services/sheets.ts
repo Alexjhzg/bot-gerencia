@@ -483,7 +483,7 @@ export class SheetsService {
             .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
             .join(' ');
 
-          reportLines.push(`📌Unidad: ${formattedDeptName}`);
+          reportLines.push(`📌 ${formattedDeptName}`);
           reportLines.push(activities);
           reportLines.push(''); // spacing line
         }

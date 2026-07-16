@@ -15,10 +15,10 @@ El diseño se estructura como una **matriz de doble entrada** en lugar de una bi
 
 El bot procesa mensajes bajo las siguientes reglas de lectura de texto:
 
-1. **Gatillador (Trigger):** El mensaje debe contener al inicio de cualquiera de sus líneas la frase `"Reporte diario"` o el prefijo `"📌Unidad:"` (insensible a mayúsculas, minúsculas o espacios). Esto permite incluir líneas informativas (como saludos o fechas) antes del trigger.
+1. **Gatillador (Trigger):** El mensaje debe contener al inicio de cualquiera de sus líneas la frase `"Reporte diario"`, el emoji `"📌"` o el signo `"+"` (insensible a mayúsculas o espacios). Esto permite iniciar el reporte directamente o incluir líneas informativas previas.
 2. **Extracción de Departamento:**
-   - Se ubica en la cabecera de la sección, precedido por el signo de suma (`+`) (ej: `+ Unidad de Prensa`) o el prefijo de unidad (`📌Unidad: Prensa`).
-   - El bot limpia caracteres adicionales y remueve espacios sobrantes.
+   - Se ubica en la cabecera de la sección, precedido por el signo de suma (`+`) (ej: `+ Prensa`) o por el emoji de alfiler (`📌`) (ej: `📌 Prensa` o `📌: Prensa`).
+   - El bot limpia caracteres adicionales (como los dos puntos `:` y espacios sobrantes).
 3. **Extracción de Actividades:**
    - Todas las líneas posteriores a la unidad que inicien con un guion (`-`), asterisco (`*`), punto (`•`) o cuadro (`▪️`) se consideran actividades del departamento.
    - Se preservan las viñetas originales del mensaje y se concatenan todas las actividades del departamento en una única celda con saltos de línea.

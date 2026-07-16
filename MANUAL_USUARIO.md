@@ -9,15 +9,15 @@ Esta guía explica paso a paso cómo utilizar el Bot de Telegram para reportar l
 Para que el bot reconozca tu reporte, el mensaje debe cumplir con tres elementos sencillos: el **Gatillador**, el **Nombre de la Unidad** y las **Actividades**.
 
 ### A. El Gatillador (Trigger)
-El bot solo procesará mensajes que contengan la frase **`Reporte diario`** o el prefijo **`📌Unidad:`** al inicio de cualquiera de sus líneas. 
-* *Nota:* Puedes incluir saludos o fechas en la primera línea si lo deseas, siempre y cuando la frase gatillo esté presente.
+El bot procesará mensajes que contengan la frase **`Reporte diario`**, el emoji **`📌`** o el signo **`+`** al inicio de cualquiera de sus líneas. 
+* *Nota:* Esto permite iniciar tu reporte directamente con la unidad o incluir saludos y fechas antes de la primera unidad.
 
 ### B. Encabezado de la Unidad
 Debes indicar a qué unidad corresponde el reporte usando uno de estos dos formatos:
-* **Formato con signo más (`+`):** `+ NOMBRE DE LA UNIDAD`
-* **Formato con emoji (`📌`):** `📌Unidad: NOMBRE DE LA UNIDAD`
+* **Formato con signo más (`+`):** `+ NOMBRE DE LA UNIDAD` (ej: `+ Prensa`)
+* **Formato con emoji (`📌`):** `📌 NOMBRE DE LA UNIDAD` o `📌: NOMBRE DE LA UNIDAD` (ej: `📌 Prensa`)
 
-> ⚠️ **Importante:** El nombre de la unidad debe escribirse correctamente (tal cual está registrado en el sistema). Si tienes dudas sobre cómo se escribe tu unidad, puedes usar el comando `/unidades` en el bot.
+> ⚠️ **Importante:** El nombre de la unidad debe escribirse correctamente (tal cual está registrado en el sistema). Si tienes dudas sobre cómo se escribe tu unidad, puedes usar el comando `/unidades` en el bot. Escribe el nombre de la unidad directamente al lado del signo `+` o del emoji `📌`.
 
 ### C. Lista de Actividades
 Cada actividad debe escribirse en una línea nueva y comenzar con alguna de las siguientes viñetas permitidas:
@@ -43,7 +43,7 @@ Reporte diario - 10/07/2026
 
 **Ejemplo 2 (Formato con emojis):**
 ```text
-📌Unidad: CAPACITACIÓN
+📌 CAPACITACIÓN
 ▪️ Elaboración del cronograma para el próximo taller de cartografía.
 ▪️ Inducción técnica a nuevos encuestadores del proyecto.
 ```
@@ -56,11 +56,11 @@ Si estás a cargo de coordinar varias áreas, puedes enviar las actividades de t
 ```text
 Reporte diario del 10/07/2026
 
-📌Unidad: COORDINACIÓN SEEM
+📌 COORDINACIÓN SEEM
 - Monitoreo en tiempo real del progreso de recolección de los equipos.
 - Supervisión logística de las rutas y distribución de materiales.
 
-📌Unidad: SOPORTE Y DESARROLLO TECNOLÓGICO
+📌 SOPORTE Y DESARROLLO TECNOLÓGICO
 ▪️ Mantenimiento preventivo al servidor local de base de datos.
 ▪️ Soporte a usuarios sobre problemas de conectividad de red.
 ```

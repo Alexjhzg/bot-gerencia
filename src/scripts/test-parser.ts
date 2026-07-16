@@ -24,15 +24,15 @@ function runTests() {
   console.log('--- STARTING MULTI-REPORT PARSER & VALIDATION TESTS ---');
 
   // Test Case 1: Multiple units with new emoji headers and bullets
-  const multiReportMessage = `📌Unidad: Productos estadisticos 
+  const multiReportMessage = `📌 Productos estadisticos 
 ▪️  Actividad 1
 ▪️  Actividad 2
 
-📌Unidad: Capacitacion 
+📌 Capacitacion 
 ▪️  Actividad A
 ▪️  Actividad B
 
-📌Unidad: Prensa
+📌 Prensa
 ▪️  Actividad X`;
 
   try {
@@ -68,7 +68,7 @@ function runTests() {
   }
 
   // Test Case 3: Mixed headers and bullets in one message
-  const mixedMessage = `📌Unidad: Prensa
+  const mixedMessage = `📌 Prensa
 - Actividad de prensa 1
 ▪️ Actividad de prensa 2
 

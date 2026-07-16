@@ -32,11 +32,14 @@ export function parseReportMessage(text: string): ParsedReport[] {
     // Detect Department Header
     let matchedDept: string | null = null;
     if (line.startsWith('+')) {
-      matchedDept = line.substring(1).trim();
-    } else {
-      const match = line.match(/^📌\s*Unidad\s*:\s*(.+)$/i);
-      if (match) {
-        matchedDept = match[1].trim();
+      const cleaned = line.substring(1).trim();
+      if (cleaned !== '') {
+        matchedDept = cleaned;
+      }
+    } else if (line.startsWith('📌')) {
+      const cleaned = line.substring(2).replace(/^\s*:\s*/, '').trim();
+      if (cleaned !== '') {
+        matchedDept = cleaned;
       }
     }
 
@@ -66,7 +69,7 @@ export function parseReportMessage(text: string): ParsedReport[] {
   if (reports.length === 0) {
     throw new Error(
       'No se encontraron reportes válidos.\n\n' +
-      'Asegúrate de indicar las unidades usando `+ Nombre` o `📌Unidad: Nombre`,\n' +
+      'Asegúrate de indicar las unidades usando `+ Nombre` o `📌 Nombre`,\n' +
       'y las actividades correspondientes iniciadas por un guion (-) o un cuadro (▪️).'
     );
   }
