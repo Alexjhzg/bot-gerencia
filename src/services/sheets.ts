@@ -11,10 +11,10 @@ export interface ReportRow {
 export const MATRIX_SHEET_NAME = 'Reportes_unificados';
 
 export const DEFAULT_DEPARTMENTS = [
-  'Gerencia',
-  'Enlace de RRHH y Administración',
-  'Coordinación de Programas',
-  'Coordinación SEEM'
+  'GERENCIA',
+  'ENLACE DE RRHH Y ADMINISTRACIÓN',
+  'COORDINACIÓN DE PROGRAMAS',
+  'COORDINACIÓN SEEM'
 ];
 
 export class SheetsService {
@@ -469,12 +469,7 @@ export class SheetsService {
 
         // Standard departments
         if (activities) {
-          // Format department title to match user format
-          const formattedDeptName = deptName
-            .toLowerCase()
-            .split(' ')
-            .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(' ');
+          const formattedDeptName = deptName.toUpperCase();
 
           reportLines.push(`📌 ${formattedDeptName}`);
           reportLines.push(activities);
