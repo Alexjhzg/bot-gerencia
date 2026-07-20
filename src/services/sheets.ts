@@ -204,8 +204,9 @@ export class SheetsService {
       };
 
       let targetColIndex = -1;
+      const maxHeaderLen = Math.max(dates.length, shifts.length);
       // Scan existing columns starting from index 1 (Column B)
-      for (let c = 1; c < shifts.length; c++) {
+      for (let c = 1; c < maxHeaderLen; c++) {
         let colDate = '';
         for (let idx = c; idx >= 1; idx--) {
           if (dates[idx]) {
@@ -230,7 +231,7 @@ export class SheetsService {
       // 2. If column not found, append a new date column block (2 columns: 12:00M & 6:00PM)
       if (targetColIndex === -1) {
         console.log(`[SheetsService] Creating new date column block for: ${todayStr}`);
-        const lastColIndex = shifts.length; // Next available column index
+        const lastColIndex = Math.max(dates.length, shifts.length, 1); // Next available column index (at least index 1 / Column B)
         const col1Letter = getColLetter(lastColIndex);
         const col2Letter = getColLetter(lastColIndex + 1);
 
@@ -381,8 +382,9 @@ export class SheetsService {
       };
 
       let targetColIndex = -1;
+      const maxHeaderLen = Math.max(dates.length, shifts.length);
       // Scan existing columns to find match
-      for (let c = 1; c < shifts.length; c++) {
+      for (let c = 1; c < maxHeaderLen; c++) {
         let colDate = '';
         for (let idx = c; idx >= 1; idx--) {
           if (dates[idx]) {
@@ -570,7 +572,8 @@ export class SheetsService {
       };
 
       let targetColIndex = -1;
-      for (let c = 1; c < shifts.length; c++) {
+      const maxHeaderLen = Math.max(dates.length, shifts.length);
+      for (let c = 1; c < maxHeaderLen; c++) {
         let colDate = '';
         for (let idx = c; idx >= 1; idx--) {
           if (dates[idx]) {
