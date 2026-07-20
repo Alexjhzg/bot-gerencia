@@ -120,6 +120,69 @@ export function normalizeText(str: string): string {
 }
 
 /**
+ * Fuzzy department matcher supporting token overlap, missing stop words (de, y, la), and acronyms.
+ */
+export function matchDepartment<T extends { name: string }>(
+  userInput: string,
+  matrixDepts: T[]
+): T | null {
+  const normUser = normalizeText(userInput);
+  const STOP_WORDS = new Set(['de', 'del', 'la', 'el', 'los', 'las', 'y', 'e']);
+
+  const getTokens = (str: string) =>
+    normalizeText(str)
+      .split(/[\s,._/-]+/)
+      .filter(w => w && !STOP_WORDS.has(w));
+
+  const userTokens = getTokens(userInput);
+
+  let bestMatch: T | null = null;
+  let bestScore = 0;
+
+  for (const d of matrixDepts) {
+    const normMatrix = normalizeText(d.name);
+
+    // Specific rule for unified ENLACE DE RRHH Y ADMINISTRACIÓN:
+    // Requires both 'RRHH' and 'ADMINISTRACION' tokens in user input!
+    if (normMatrix.includes('rrhh') && normMatrix.includes('administracion')) {
+      const hasRRHH = userTokens.some(t => t.includes('rrhh'));
+      const hasAdmin = userTokens.some(t => t.includes('admin') || t.includes('administrac'));
+      if (!hasRRHH || !hasAdmin) {
+        continue; // Do not match if missing either RRHH or Admin
+      }
+    }
+
+    // 1. Exact or direct substring match
+    if (
+      normMatrix === normUser ||
+      normMatrix.replace(/\s/g, '') === normUser.replace(/\s/g, '') ||
+      normMatrix.includes(normUser) ||
+      normUser.includes(normMatrix)
+    ) {
+      return d;
+    }
+
+    // 2. Token overlap score (ignoring stop words like 'de', 'y')
+    const matrixTokens = getTokens(d.name);
+    if (matrixTokens.length === 0 || userTokens.length === 0) continue;
+
+    const matchedTokensCount = userTokens.filter(ut =>
+      matrixTokens.some(mt => mt === ut || mt.includes(ut) || ut.includes(mt))
+    ).length;
+
+    const score = matchedTokensCount / Math.max(userTokens.length, matrixTokens.length);
+    const userMatchedRatio = matchedTokensCount / userTokens.length;
+
+    if (userMatchedRatio >= 0.5 && score > bestScore) {
+      bestScore = score;
+      bestMatch = d;
+    }
+  }
+
+  return bestMatch;
+}
+
+/**
  * Helper to split a long message into multiple line-safe chunks
  * to avoid Telegram API 400 Bad Request error (message is too long).
  */

@@ -7,6 +7,7 @@ import {
   getUserString,
   getFormattedDate,
   normalizeText,
+  matchDepartment,
 } from '../utils/report';
 
 /**
@@ -64,18 +65,8 @@ export async function reportHandler(ctx: BotContext) {
     }
 
     const validatedReports = parsedReports.map((r) => {
-      const normalizedUserDept = normalizeText(r.department);
-      
-      // Perform fuzzy and normalized matching
-      const officialMatch = matrixDepts.find((d) => {
-        const normMatrixDept = normalizeText(d.name);
-        return (
-          normMatrixDept === normalizedUserDept ||
-          normMatrixDept.replace(/\s/g, '') === normalizedUserDept.replace(/\s/g, '') ||
-          normMatrixDept.includes(normalizedUserDept) ||
-          normalizedUserDept.includes(normMatrixDept)
-        );
-      });
+      // Perform intelligent fuzzy and token-based matching
+      const officialMatch = matchDepartment(r.department, matrixDepts);
 
       return {
         originalDeptName: r.department,
