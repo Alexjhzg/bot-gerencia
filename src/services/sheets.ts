@@ -8,22 +8,13 @@ export interface ReportRow {
   activities: string;
 }
 
+export const MATRIX_SHEET_NAME = 'Reportes_unificados';
+
 export const DEFAULT_DEPARTMENTS = [
   'Gerencia',
-  'Administración',
-  'Coordinación SEEM',
-  'Coodinación de Programas Estadísticos',
-  'Control y Seguimiento',
-  'SEGEN',
-  'Económica',
-  'Sociales',
-  'Demográfica',
-  'Cartografía',
-  'Soporte y Desarrollo Tecnológico',
-  'Capacitación',
-  'Productos Estadísticos',
-  'Prensa',
-  'Enlace de RRHH'
+  'Enlace de RRHH y Administración',
+  'Coordinación de Programas',
+  'Coordinación SEEM'
 ];
 
 export class SheetsService {
@@ -155,14 +146,14 @@ export class SheetsService {
   }
 
   /**
-   * Fetches the departments listed in Column A of the 'Reportes' matrix sheet, along with their row indices.
+   * Fetches the departments listed in Column A of the 'Reportes_unificados' matrix sheet, along with their row indices.
    */
   public async getMatrixDepartments(): Promise<{ name: string; rowIndex: number }[]> {
     try {
       const sheets = google.sheets({ version: 'v4', auth: this.authClient });
       const response = await sheets.spreadsheets.values.get({
         spreadsheetId: config.sheetId,
-        range: 'Reportes!A3:A50',
+        range: `${MATRIX_SHEET_NAME}!A3:A50`,
       });
       const rows = response.data.values || [];
       return rows
@@ -178,7 +169,7 @@ export class SheetsService {
   }
 
   /**
-   * Writes activities to the matrix sheet 'Reportes' at the intersection of the department row and the current shift column.
+   * Writes activities to the matrix sheet 'Reportes_unificados' at the intersection of the department row and the current shift column.
    * If today's column block doesn't exist, it automatically creates it (both 12:00M and 6:00PM columns) and merges the date header.
    */
   public async writeMatrixReport(
@@ -193,7 +184,7 @@ export class SheetsService {
       // 1. Fetch current header (Rows 1 & 2) to locate today's date column
       const response = await sheets.spreadsheets.values.get({
         spreadsheetId,
-        range: 'Reportes!A1:ZZ2',
+        range: `${MATRIX_SHEET_NAME}!A1:ZZ2`,
       });
       const rows = response.data.values || [];
       const dates = rows[0] || [];
@@ -243,9 +234,9 @@ export class SheetsService {
         const col1Letter = getColLetter(lastColIndex);
         const col2Letter = getColLetter(lastColIndex + 1);
 
-        // Get the sheetId and current columnCount of 'Reportes'
+        // Get the sheetId and current columnCount of matrix sheet
         const sheetMetadata = await sheets.spreadsheets.get({ spreadsheetId });
-        const targetSheet = sheetMetadata.data.sheets?.find(s => s.properties?.title === 'Reportes');
+        const targetSheet = sheetMetadata.data.sheets?.find(s => s.properties?.title === MATRIX_SHEET_NAME);
         const sheetId = targetSheet?.properties?.sheetId!;
         const currentColumnCount = targetSheet?.properties?.gridProperties?.columnCount || 26;
 
@@ -276,7 +267,7 @@ export class SheetsService {
         // Write the header values: Today's Date in Row 1, Shifts in Row 2
         await sheets.spreadsheets.values.update({
           spreadsheetId,
-          range: `Reportes!${col1Letter}1:${col2Letter}2`,
+          range: `${MATRIX_SHEET_NAME}!${col1Letter}1:${col2Letter}2`,
           valueInputOption: 'USER_ENTERED',
           requestBody: {
             values: [
@@ -312,7 +303,7 @@ export class SheetsService {
 
       // 3. Write activities to the target cell (intersection)
       const targetColLetter = getColLetter(targetColIndex);
-      const targetCell = `Reportes!${targetColLetter}${departmentRowIndex}`;
+      const targetCell = `${MATRIX_SHEET_NAME}!${targetColLetter}${departmentRowIndex}`;
 
       // Check if the cell already contains data (to determine if it's an overwrite)
       let isOverwrite = false;
@@ -369,7 +360,7 @@ export class SheetsService {
       // 1. Fetch current header to locate today's date column
       const headerResponse = await sheets.spreadsheets.values.get({
         spreadsheetId,
-        range: 'Reportes!A1:ZZ2',
+        range: `${MATRIX_SHEET_NAME}!A1:ZZ2`,
       });
       const headerRows = headerResponse.data.values || [];
       const dates = headerRows[0] || [];
@@ -423,7 +414,7 @@ export class SheetsService {
       const targetColLetter = getColLetter(targetColIndex);
       const dataResponse = await sheets.spreadsheets.values.get({
         spreadsheetId,
-        range: `Reportes!A3:${targetColLetter}20`,
+        range: `${MATRIX_SHEET_NAME}!A3:${targetColLetter}50`,
       });
 
       const dataRows = dataResponse.data.values || [];
@@ -560,7 +551,7 @@ export class SheetsService {
       // 1. Fetch current header to locate today's date column
       const headerResponse = await sheets.spreadsheets.values.get({
         spreadsheetId,
-        range: 'Reportes!A1:ZZ2',
+        range: `${MATRIX_SHEET_NAME}!A1:ZZ2`,
       });
       const headerRows = headerResponse.data.values || [];
       const dates = headerRows[0] || [];
@@ -618,7 +609,7 @@ export class SheetsService {
       const targetColLetter = getColLetter(targetColIndex);
       const dataResponse = await sheets.spreadsheets.values.get({
         spreadsheetId,
-        range: `Reportes!A3:${targetColLetter}50`,
+        range: `${MATRIX_SHEET_NAME}!A3:${targetColLetter}50`,
       });
 
       const dataRows = dataResponse.data.values || [];

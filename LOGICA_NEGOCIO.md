@@ -5,7 +5,7 @@ Este documento detalla las reglas de negocio, el flujo de procesamiento de datos
 ---
 
 ## 1. Propósito General del Bot
-El bot sirve para que los integrantes del equipo envíen sus reportes diarios de actividades a un chat (privado o grupal) de Telegram y que estos se registren en tiempo real en la pestaña **`Reportes`** en Google Sheets. 
+El bot sirve para que los integrantes del equipo envíen sus reportes diarios de actividades a un chat (privado o grupal) de Telegram y que estos se registren en tiempo real en la pestaña **`Reportes_unificados`** en Google Sheets. 
 
 El diseño se estructura como una **matriz de doble entrada** en lugar de una bitácora lineal. Las actividades se registran directamente en la celda de intersección correspondiente al departamento (fila) y el turno/fecha del día (columna).
 
@@ -30,11 +30,11 @@ El bot procesa mensajes bajo las siguientes reglas de lectura de texto:
 
 ## 3. Mapeo y Estructura en Google Sheets (Formato Matriz)
 
-El destino principal de escritura es la pestaña **`Reportes`**, la cual sigue una cuadrícula bidimensional estructurada:
+El destino principal de escritura es la pestaña **`Reportes_unificados`**, la cual sigue una cuadrícula bidimensional estructurada:
 
 * **Fila 1:** Encabezados con las fechas combinadas de dos en dos, bajo el formato `DÍA DD/M/YY` (ej. `JUEVES 09/7/26`, sin ceros a la izquierda en el mes).
 * **Fila 2:** Columnas de Turnos: `12:00M` y `5:00 PM` (soporta `6:00 PM` en registros históricos).
-* **Columna A (Filas 3 a 19):** Nombres de los departamentos oficiales en orden.
+* **Columna A (Filas 3 a 8):** Nombres de los departamentos oficiales en orden.
 * **Intersección (Celdas):** Texto concatenado con las actividades de la unidad correspondiente para ese turno del día.
 
 ---
@@ -56,25 +56,14 @@ El destino principal de escritura es la pestaña **`Reportes`**, la cual sigue u
 
 ## 5. Departamentos Autorizados (Fila Mapeada en la Matriz)
 
-El bot lee de manera dinámica la columna A (`A3:A50`) de la pestaña `Reportes` para conocer los departamentos válidos y su índice de fila exacto en Google Sheets. Soporta coincidencias flexibles (insensibles a acentos o mayúsculas):
+El bot lee de manera dinámica la columna A (`A3:A50`) de la pestaña `Reportes_unificados` para conocer los departamentos válidos y su índice de fila exacto en Google Sheets. Soporta coincidencias flexibles (insensibles a acentos o mayúsculas):
 
 1. Fila 3: **GERENCIA**
-2. Fila 4: **ADMINISTRACIÓN**
-3. Fila 5: **ENLACE RRHH**
-4. Fila 6: **COORDINACIÓN PROGRAMAS**
-5. Fila 7: **SOCIALES**
-6. Fila 8: **ECONÓMICA**
-7. Fila 9: **DEMOGRÁFICA**
-8. Fila 10: **CARTOGRAFÍA**
-9. Fila 11: **SEGEN**
-10. Fila 12: **COORDINACIÓN SEEM**
-11. Fila 13: **SOPORTE Y DESARROLLO TECNOLÓGICO**
-12. Fila 14: **CAPACITACIÓN**
-13. Fila 15: **PRENSA**
-14. Fila 16: **PRODUCTOS ESTADÍSTICOS**
-15. Fila 17: **SEGUIMIENTO Y CONTROL**
-16. Fila 18: **SITUACIÓN CLIMATICA** *(Tratamiento especial en reportes)*
-17. Fila 19: **NOVEDADES** *(Tratamiento especial en reportes)*
+2. Fila 4: **ENLACE DE RRHH Y ADMINISTRACIÓN**
+3. Fila 5: **COORDINACIÓN DE PROGRAMAS**
+4. Fila 6: **COORDINACIÓN SEEM**
+5. Fila 7: **SITUACIÓN CLIMÁTICA** *(Tratamiento especial en reportes)*
+6. Fila 8: **NOVEDADES** *(Tratamiento especial en reportes)*
 
 ---
 

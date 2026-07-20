@@ -60,7 +60,7 @@ export async function reportHandler(ctx: BotContext) {
     const matrixDepts = await sheetsService.getMatrixDepartments();
 
     if (matrixDepts.length === 0) {
-      throw new Error('No se encontraron departamentos configurados en la pestaña "Reportes" (A3:A50).');
+      throw new Error('No se encontraron departamentos configurados en la pestaña "Reportes_unificados" (A3:A50).');
     }
 
     const validatedReports = parsedReports.map((r) => {
@@ -98,7 +98,7 @@ export async function reportHandler(ctx: BotContext) {
         .map((d) => `• ${d.name}`)
         .join('\n');
       throw new Error(
-        `Las siguientes unidades no están registradas en la matriz de Reportes:\n${invalidListStr}\n\n` +
+        `Las siguientes unidades no están registradas en la matriz de Reportes_unificados:\n${invalidListStr}\n\n` +
         `*Unidades autorizadas en la matriz:*\n${allowedList}\n\n` +
         `⚠️ _Por favor, corrige la ortografía después de 📌 o del signo +._`
       );
