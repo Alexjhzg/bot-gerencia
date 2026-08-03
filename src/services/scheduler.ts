@@ -41,8 +41,8 @@ export async function sendConsolidatedToManager(isShift1: boolean) {
 export function startScheduler() {
   console.log('[Scheduler] Initializing automated report scheduler...');
 
-  // Shift 1: Daily at 12:01 PM (1 minute after 12:00 PM cutoff)
-  cron.schedule('01 12 * * *', () => {
+  // Shift 1: Daily at 12:31 PM (1 minute after 12:30 PM cutoff)
+  cron.schedule('31 12 * * *', () => {
     sendConsolidatedToManager(true);
   });
 
@@ -51,5 +51,5 @@ export function startScheduler() {
     sendConsolidatedToManager(false);
   });
 
-  console.log('[Scheduler] Cron jobs scheduled for 12:01 PM and 5:01 PM daily.');
+  console.log('[Scheduler] Cron jobs scheduled for 12:31 PM and 5:01 PM daily.');
 }

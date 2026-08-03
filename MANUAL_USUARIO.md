@@ -72,9 +72,9 @@ Reporte diario del 10/07/2026
 El bot organiza la información en dos turnos diarios de acuerdo a la hora en que envías el mensaje (hora de Venezuela):
 
 1. **Turno de la Mañana (1er Reporte - `12:00M`):**
-   * **Horario de envío:** Desde las **12:00 AM** hasta las **12:00 PM** (Mediodía).
+   * **Horario de envío:** Desde las **12:00 AM** hasta las **12:30 PM**.
 2. **Turno de la Tarde (2do Reporte - `5:00 PM`):**
-   * **Horario de envío:** Desde las **12:01 PM** hasta las **5:00 PM** (17:00).
+   * **Horario de envío:** Desde las **12:31 PM** hasta las **5:00 PM** (17:00).
 
 > 🚫 **Fuera de Horario:** Cualquier reporte enviado a partir de las **5:01 PM** será rechazado automáticamente por el bot.
 

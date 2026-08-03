@@ -72,8 +72,8 @@ El bot lee de manera dinámica la columna A (`A3:A50`) de la pestaña `Reportes_
 El bot administra las celdas basadas en ventanas horarias y permite correcciones instantáneas:
 
 ### A. Turnos y Horarios Oficiales (Configurables)
-* **Turno 1 (Mediodía):** Desde las **00:00 AM hasta las 12:00 PM**. Mapea a la columna del turno `12:00M`.
-* **Turno 2 (Tarde):** Desde las **12:01 PM hasta las 5:00 PM (17:00)**. Mapea a la columna del turno `5:00 PM`.
+* **Turno 1 (Mediodía):** Desde las **00:00 AM hasta las 12:30 PM**. Mapea a la columna del turno `12:00M`.
+* **Turno 2 (Tarde):** Desde las **12:31 PM hasta las 5:00 PM (17:00)**. Mapea a la columna del turno `5:00 PM`.
 * **Fuera de Horario:** Reportes enviados a partir de las 17:01 son automáticamente rechazados.
 
 ### B. Sobrescritura de Celda (Correcciones)
