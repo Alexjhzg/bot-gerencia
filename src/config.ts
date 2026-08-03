@@ -15,9 +15,9 @@ export interface Config {
   sheetRange: string;
   googleEmail: string;
   googlePrivateKey: string;
-  shift1Limit: string; // e.g. "12:00"
-  shift2Limit: string; // e.g. "18:00"
-  managerChatId?: string;
+  shift1Limit: string; // e.g. "12:30"
+  shift2Limit: string; // e.g. "17:00"
+  managerChatIds: string[];
 }
 
 function getEnvOrThrow(key: string): string {
@@ -41,7 +41,9 @@ export const config: Config = {
   googleEmail: getEnvOrThrow('GOOGLE_SERVICE_ACCOUNT_EMAIL'),
   googlePrivateKey: getPrivateKey(),
   shift1Limit: process.env.SHIFT_1_LIMIT || '12:30',
-  shift2Limit: process.env.SHIFT_2_LIMIT || '18:00',
-  managerChatId: process.env.MANAGER_CHAT_ID ? process.env.MANAGER_CHAT_ID.trim() : undefined,
+  shift2Limit: process.env.SHIFT_2_LIMIT || '17:00',
+  managerChatIds: process.env.MANAGER_CHAT_ID
+    ? process.env.MANAGER_CHAT_ID.split(',').map((id) => id.trim()).filter(Boolean)
+    : [],
 };
 

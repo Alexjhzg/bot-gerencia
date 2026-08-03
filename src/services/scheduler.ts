@@ -8,24 +8,26 @@ import { splitMessage } from '../utils/report';
  * Fetches the consolidated report for the specified shift and sends it to the manager.
  */
 export async function sendConsolidatedToManager(isShift1: boolean) {
-  const managerChatId = config.managerChatId;
-  if (!managerChatId) {
+  const managerChatIds = config.managerChatIds;
+  if (!managerChatIds || managerChatIds.length === 0) {
     console.warn('[Scheduler] No MANAGER_CHAT_ID configured. Skipping consolidated report send.');
     return;
   }
 
-  const shiftLabel = isShift1 ? '12:00M' : '5:00 PM';
-  console.log(`[Scheduler] Generating automatic consolidated report for Shift ${shiftLabel} to send to Manager (Chat ID: ${managerChatId})...`);
+  const shiftLabel = isShift1 ? '12:30M' : '5:00 PM';
+  console.log(`[Scheduler] Generating automatic consolidated report for Shift ${shiftLabel} to send to Manager(s) (Chat IDs: ${managerChatIds.join(', ')})...`);
 
   try {
     const sheetsService = SheetsService.getInstance();
     const reportText = await sheetsService.getConsolidatedReport(isShift1);
 
     const chunks = splitMessage(reportText, 4000);
-    for (const chunk of chunks) {
-      await bot.api.sendMessage(managerChatId, chunk);
+    for (const chatId of managerChatIds) {
+      for (const chunk of chunks) {
+        await bot.api.sendMessage(chatId, chunk);
+      }
+      console.log(`[Scheduler] Consolidated report for Shift ${shiftLabel} sent successfully to manager (${chatId}).`);
     }
-    console.log(`[Scheduler] Consolidated report for Shift ${shiftLabel} sent successfully to manager.`);
   } catch (error: any) {
     if (error.message && error.message.includes('No se han encontrado registros')) {
       console.log(`[Scheduler] Shift ${shiftLabel}: No records found to consolidate. Skipping.`);

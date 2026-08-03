@@ -47,6 +47,12 @@ bot.command('unidades', unidadesHandler);
 // Command to check report submission status
 bot.command('estatus', estatusHandler);
 
+// Command to get user's Telegram Chat ID
+bot.command(['id', 'myid'], async (ctx) => {
+  const chatId = ctx.chat.id;
+  await ctx.reply(`🆔 Tu Telegram Chat ID es: \`${chatId}\``, { parse_mode: 'Markdown' });
+});
+
 // Register the regex handler. Matches messages containing a line starting with "Reporte diario", "📌", or "+"
 bot.hears(/^(reporte diario|📌|\+)/im, reportHandler);
 
