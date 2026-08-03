@@ -34,6 +34,11 @@ function getPrivateKey(): string {
   return rawKey.replace(/\\n/g, '\n');
 }
 
+function parseChatIds(envVal?: string): string[] {
+  if (!envVal) return [];
+  return envVal.split(',').map((id) => id.trim()).filter(Boolean);
+}
+
 export const config: Config = {
   telegramToken: getEnvOrThrow('TELEGRAM_BOT_TOKEN'),
   sheetId: getEnvOrThrow('GOOGLE_SHEET_ID'),
@@ -42,8 +47,11 @@ export const config: Config = {
   googlePrivateKey: getPrivateKey(),
   shift1Limit: process.env.SHIFT_1_LIMIT || '12:30',
   shift2Limit: process.env.SHIFT_2_LIMIT || '17:00',
-  managerChatIds: process.env.MANAGER_CHAT_ID
-    ? process.env.MANAGER_CHAT_ID.split(',').map((id) => id.trim()).filter(Boolean)
-    : [],
+  managerChatIds: Array.from(
+    new Set([
+      ...parseChatIds(process.env.MANAGER_CHAT_ID),
+      ...parseChatIds(process.env.ACTING_MANAGER_CHAT_ID),
+    ])
+  ),
 };
 
