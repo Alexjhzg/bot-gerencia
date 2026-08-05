@@ -5,6 +5,26 @@ import { SheetsService } from './sheets';
 import { splitMessage } from '../utils/report';
 
 /**
+ * Helper to send a message with automatic retry logic for transient network issues.
+ */
+async function sendMessageWithRetry(chatId: string, text: string, maxRetries = 3, delayMs = 3000) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      await bot.api.sendMessage(chatId, text);
+      return;
+    } catch (error: any) {
+      if (attempt === maxRetries) {
+        throw error;
+      }
+      console.warn(
+        `[Scheduler] Intento ${attempt}/${maxRetries} fallido enviando reporte a ${chatId}. Reintentando en ${delayMs / 1000}s... Error: ${error.message || error}`
+      );
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+  }
+}
+
+/**
  * Fetches the consolidated report for the specified shift and sends it to the manager.
  */
 export async function sendConsolidatedToManager(isShift1: boolean) {
@@ -24,7 +44,7 @@ export async function sendConsolidatedToManager(isShift1: boolean) {
     const chunks = splitMessage(reportText, 4000);
     for (const chatId of managerChatIds) {
       for (const chunk of chunks) {
-        await bot.api.sendMessage(chatId, chunk);
+        await sendMessageWithRetry(chatId, chunk);
       }
       console.log(`[Scheduler] Consolidated report for Shift ${shiftLabel} sent successfully to manager (${chatId}).`);
     }
