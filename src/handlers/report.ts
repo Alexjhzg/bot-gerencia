@@ -108,7 +108,7 @@ export async function reportHandler(ctx: BotContext) {
       // Format activity with bullet points and metadata if required (we write raw activities directly to the cell)
       const bulletedActivities = activities
         .split('\n')
-        .map(line => `• ${line}`)
+        .map(line => `▪️ ${line}`)
         .join('\n');
 
       console.log(`[Bot] [Report] Guardando reporte en Google Sheets: Departamento "${departmentName}" (Fila ${rowIndex})`);
@@ -122,7 +122,7 @@ export async function reportHandler(ctx: BotContext) {
       const actionLabel = isOverwrite ? 'Corregido 🔄' : 'Guardado ✅';
       console.log(`[Bot] [Report] Google Sheets: "${departmentName}" -> ${actionLabel}`);
       const escapedDept = departmentName.replace(/[_*[\]()~`>#+-=|{}.!]/g, '\\$&');
-      resultsSummary.push(`• *${escapedDept}*: ${actionLabel}`);
+      resultsSummary.push(`▪️ *${escapedDept}*: ${actionLabel}`);
     }
 
     // React with a thumbs up emoji (👍) to the user's message

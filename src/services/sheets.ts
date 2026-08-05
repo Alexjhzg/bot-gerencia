@@ -455,14 +455,14 @@ export class SheetsService {
         if (deptName.toUpperCase().includes('CLIMATICA') || deptName.toUpperCase().includes('CLIMÁTICA')) {
           if (activities) {
             // Strip leading bullet point for clean representation
-            climaText = activities.replace(/^•\s*/gm, '');
+            climaText = activities.replace(/^[-*•▪️▪▫]\s*/gm, '');
           }
           continue;
         }
         if (deptName.toUpperCase().includes('NOVEDADES')) {
           if (activities) {
             // Strip leading bullet point for clean representation
-            novedadesText = activities.replace(/^•\s*/gm, '');
+            novedadesText = activities.replace(/^[-*•▪️▪▫]\s*/gm, '');
           }
           continue;
         }
@@ -470,9 +470,10 @@ export class SheetsService {
         // Standard departments
         if (activities) {
           const formattedDeptName = deptName.toUpperCase();
+          const formattedActivities = activities.replace(/^[-*•▪▫]\s*/gm, '▪️ ');
 
           reportLines.push(`📌 ${formattedDeptName}`);
-          reportLines.push(activities);
+          reportLines.push(formattedActivities);
           reportLines.push(''); // spacing line
         }
       }
