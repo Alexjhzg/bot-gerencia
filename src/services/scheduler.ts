@@ -10,7 +10,7 @@ import { splitMessage } from '../utils/report';
 async function sendMessageWithRetry(chatId: string, text: string, maxRetries = 3, delayMs = 3000) {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      await bot.api.sendMessage(chatId, text);
+      await bot.api.sendMessage(chatId, text, { parse_mode: 'Markdown' });
       return;
     } catch (error: any) {
       if (attempt === maxRetries) {

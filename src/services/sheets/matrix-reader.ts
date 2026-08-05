@@ -104,11 +104,11 @@ export async function getConsolidatedReport(isShift1: boolean, customDateStr?: s
     const shiftHeader = isShift1 ? '1ER REPORTE 12:00M' : '2DO REPORTE 5:00PM';
 
     let reportLines: string[] = [
-      'MONAGAS',
+      '*MONAGAS*',
       '',
-      spanishDateStr,
+      `*${spanishDateStr}*`,
       '',
-      shiftHeader,
+      `*${shiftHeader}*`,
       ''
     ];
 
@@ -140,18 +140,18 @@ export async function getConsolidatedReport(isShift1: boolean, customDateStr?: s
         const formattedDeptName = deptName.toUpperCase();
         const formattedActivities = activities.replace(/^[-*•▪▫]\s*/gm, '▪️ ');
 
-        reportLines.push(`📌 ${formattedDeptName}`);
+        reportLines.push(`📌 *${formattedDeptName}*`);
         reportLines.push(formattedActivities);
         reportLines.push(''); // spacing line
       }
     }
 
     // Always append climate section
-    reportLines.push(`SITUACIÓN CLIMÁTICA: ${climaText || 'Sin reporte'}`);
+    reportLines.push(`*SITUACIÓN CLIMÁTICA:* ${climaText || 'Sin reporte'}`);
     reportLines.push('');
 
     if (novedadesText) {
-      reportLines.push(`NOVEDADES: ${novedadesText}`);
+      reportLines.push(`*NOVEDADES:* ${novedadesText}`);
       reportLines.push('');
     }
 

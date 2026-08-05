@@ -101,7 +101,7 @@ export async function consolidationHandler(ctx: BotContext) {
     // Split the report into multiple messages if it exceeds Telegram's limit
     const chunks = splitMessage(reportText, 4000);
     for (const chunk of chunks) {
-      await ctx.reply(chunk);
+      await ctx.reply(chunk, { parse_mode: 'Markdown' });
     }
     console.log(`[Bot] [Command] Consolidado enviado con éxito a ${user}`);
   } catch (error: any) {
