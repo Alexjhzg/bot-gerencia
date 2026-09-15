@@ -46,7 +46,7 @@ export const config: Config = {
   googleEmail: getEnvOrThrow('GOOGLE_SERVICE_ACCOUNT_EMAIL'),
   googlePrivateKey: getPrivateKey(),
   shift1Limit: process.env.SHIFT_1_LIMIT || '12:30',
-  shift2Limit: process.env.SHIFT_2_LIMIT || '17:00',
+  shift2Limit: process.env.SHIFT_2_LIMIT || '17:30',
   managerChatIds: Array.from(
     new Set([
       ...parseChatIds(process.env.MANAGER_CHAT_ID),

@@ -44,14 +44,14 @@ export async function writeMatrixReport(
           targetColIndex = c;
           break;
         }
-        if (!isShift1 && (colShift === '5:00PM' || colShift === '6:00PM')) {
+        if (!isShift1 && (colShift === '5:00PM' || colShift === '5:30PM' || colShift === '6:00PM')) {
           targetColIndex = c;
           break;
         }
       }
     }
 
-    // 2. If column not found, append a new date column block (2 columns: 12:00M & 5:00PM)
+    // 2. If column not found, append a new date column block (2 columns: 12:00M & 5:30PM)
     if (targetColIndex === -1) {
       console.log(`[SheetsService] Creating new date column block for: ${todayStr}`);
       const lastColIndex = Math.max(dates.length, shifts.length, 1); // Next available column index (at least index 1 / Column B)
@@ -96,7 +96,7 @@ export async function writeMatrixReport(
         requestBody: {
           values: [
             [todayStr, ''],
-            ['12:00M', '5:00PM']
+            ['12:00M', '5:30PM']
           ]
         }
       });

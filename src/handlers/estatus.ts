@@ -23,7 +23,7 @@ export async function estatusHandler(ctx: BotContext) {
     const timeStr = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
     const { isShift1 } = getShiftStatus(timeStr);
 
-    const shiftName = isShift1 ? 'Mañana (12:00 M)' : 'Tarde (5:00 PM)';
+    const shiftName = isShift1 ? 'Mañana (12:00 M)' : 'Tarde (5:30 PM)';
     const { submitted, pending } = await sheetsService.getReportsStatus(isShift1);
 
     const total = submitted.length + pending.length;

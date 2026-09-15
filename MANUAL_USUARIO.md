@@ -73,10 +73,10 @@ El bot organiza la información en dos turnos diarios de acuerdo a la hora en qu
 
 1. **Turno de la Mañana (1er Reporte - `12:00M`):**
    * **Horario de envío:** Desde las **12:00 AM** hasta las **12:30 PM**.
-2. **Turno de la Tarde (2do Reporte - `5:00 PM`):**
-   * **Horario de envío:** Desde las **12:31 PM** hasta las **5:00 PM** (17:00).
+2. **Turno de la Tarde (2do Reporte - `5:30 PM`):**
+   * **Horario de envío:** Desde las **12:31 PM** hasta las **5:30 PM** (17:30).
 
-> 🚫 **Fuera de Horario:** Cualquier reporte enviado a partir de las **5:01 PM** será rechazado automáticamente por el bot.
+> 🚫 **Fuera de Horario:** Cualquier reporte enviado a partir de las **5:31 PM** será rechazado automáticamente por el bot.
 
 ---
 

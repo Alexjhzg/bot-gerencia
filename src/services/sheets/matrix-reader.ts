@@ -101,7 +101,7 @@ export async function getConsolidatedReport(isShift1: boolean, customDateStr?: s
     }
 
     const spanishDateStr = formatSpanishDateFromMatrix(actualDateHeader || searchDateStr);
-    const shiftHeader = isShift1 ? '1ER REPORTE 12:00M' : '2DO REPORTE 5:00PM';
+    const shiftHeader = isShift1 ? '1ER REPORTE 12:00M' : '2DO REPORTE 5:30PM';
 
     let reportLines: string[] = [
       '*MONAGAS*',
