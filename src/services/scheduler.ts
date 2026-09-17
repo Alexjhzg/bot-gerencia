@@ -61,17 +61,19 @@ export async function sendConsolidatedToManager(isShift1: boolean) {
  * Starts the automated cron job scheduler.
  */
 export function startScheduler() {
-  console.log('[Scheduler] Initializing automated report scheduler...');
+  const timezone = process.env.TZ || 'America/Caracas';
+  console.log(`[Scheduler] Initializing automated report scheduler (Timezone: ${timezone})...`);
 
   // Shift 1: Daily at 12:31 PM (1 minute after 12:30 PM cutoff)
   cron.schedule('31 12 * * *', () => {
     sendConsolidatedToManager(true);
-  });
+  }, { timezone });
 
   // Shift 2: Daily at 5:30 PM
   cron.schedule('30 17 * * *', () => {
     sendConsolidatedToManager(false);
-  });
+  }, { timezone });
 
-  console.log('[Scheduler] Cron jobs scheduled for 12:31 PM and 5:30 PM daily.');
+  console.log(`[Scheduler] Cron jobs scheduled for 12:31 PM and 5:30 PM daily (${timezone}).`);
 }
+

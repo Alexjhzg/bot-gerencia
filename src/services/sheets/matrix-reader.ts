@@ -69,7 +69,7 @@ export async function getConsolidatedReport(isShift1: boolean, customDateStr?: s
           targetColIndex = c;
           break;
         }
-        if (!isShift1 && (colShift === '5:00PM' || colShift === '6:00PM')) {
+        if (!isShift1 && (colShift === '5:00PM' || colShift === '5:30PM' || colShift === '6:00PM')) {
           targetColIndex = c;
           break;
         }
@@ -202,7 +202,7 @@ export async function getReportsStatus(isShift1: boolean): Promise<{ submitted: 
           targetColIndex = c;
           break;
         }
-        if (!isShift1 && (colShift === '5:00PM' || colShift === '6:00PM')) {
+        if (!isShift1 && (colShift === '5:00PM' || colShift === '5:30PM' || colShift === '6:00PM')) {
           targetColIndex = c;
           break;
         }
