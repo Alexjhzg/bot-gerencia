@@ -1,7 +1,7 @@
 import { BotContext } from '../types/context';
 import { SheetsService } from '../services/sheets';
 import { getShiftStatus } from '../utils/shifts';
-import { getUserString } from '../utils/report';
+import { getUserString, escapeHtml } from '../utils/report';
 
 /**
  * Handler triggered by the "/estatus" command.
@@ -28,26 +28,34 @@ export async function estatusHandler(ctx: BotContext) {
 
     const total = submitted.length + pending.length;
 
-    let responseMessage = `📊 *Estatus de Reportes - Turno: ${shiftName}*\n\n`;
+    let responseMessage = `📊 <b>Estatus de Reportes - Turno: ${escapeHtml(shiftName)}</b>\n\n`;
     
-    responseMessage += `✅ *Enviados (${submitted.length}/${total}):*\n`;
+    responseMessage += `✅ <b>Enviados (${submitted.length}/${total}):</b>\n`;
     if (submitted.length > 0) {
-      responseMessage += submitted.map(name => `• ${name}`).join('\n') + '\n\n';
+      responseMessage += submitted.map(name => `• ${escapeHtml(name)}`).join('\n') + '\n\n';
     } else {
-      responseMessage += `_Ninguna unidad ha reportado aún._\n\n`;
+      responseMessage += `<i>Ninguna unidad ha reportado aún.</i>\n\n`;
     }
 
-    responseMessage += `⏳ *Pendientes (${pending.length}/${total}):*\n`;
+    responseMessage += `⏳ <b>Pendientes (${pending.length}/${total}):</b>\n`;
     if (pending.length > 0) {
-      responseMessage += pending.map(name => `• ${name}`).join('\n') + '\n\n';
+      responseMessage += pending.map(name => `• ${escapeHtml(name)}`).join('\n') + '\n\n';
     } else {
-      responseMessage += `_¡Todas las unidades han reportado! 🎉_\n\n`;
+      responseMessage += `<i>¡Todas las unidades han reportado! 🎉</i>\n\n`;
     }
 
-    await ctx.reply(responseMessage, { parse_mode: 'Markdown' });
+    try {
+      await ctx.reply(responseMessage, { parse_mode: 'HTML' });
+    } catch {
+      await ctx.reply(responseMessage.replace(/<[^>]*>/g, ''));
+    }
     console.log(`[Bot] [Command] Estatus enviado con éxito a ${user} (Enviados: ${submitted.length}, Pendientes: ${pending.length})`);
   } catch (error: any) {
     console.error(`[Bot] [Command] [Error] al obtener estatus para ${user}:`, error.message || error);
-    await ctx.reply(`❌ *Error al obtener el estatus:* ${error.message || error}`);
+    try {
+      await ctx.reply(`❌ <b>Error al obtener el estatus:</b> ${escapeHtml(error.message || String(error))}`, { parse_mode: 'HTML' });
+    } catch {
+      await ctx.reply(`❌ Error al obtener el estatus: ${error.message || error}`);
+    }
   }
 }

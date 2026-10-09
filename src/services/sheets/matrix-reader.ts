@@ -6,6 +6,7 @@ import {
   getColLetter,
 } from './utils';
 import { config } from '../../config';
+import { escapeHtml } from '../../utils/report';
 
 /**
  * Fetches the departments listed in Column A of the 'Reportes_unificados' matrix sheet, along with their row indices.
@@ -104,11 +105,11 @@ export async function getConsolidatedReport(isShift1: boolean, customDateStr?: s
     const shiftHeader = isShift1 ? '1ER REPORTE 12:00M' : '2DO REPORTE 5:30PM';
 
     let reportLines: string[] = [
-      '*MONAGAS*',
+      '<b>MONAGAS</b>',
       '',
-      `*${spanishDateStr}*`,
+      `<b>${escapeHtml(spanishDateStr)}</b>`,
       '',
-      `*${shiftHeader}*`,
+      `<b>${escapeHtml(shiftHeader)}</b>`,
       ''
     ];
 
@@ -137,21 +138,21 @@ export async function getConsolidatedReport(isShift1: boolean, customDateStr?: s
 
       // Standard departments
       if (activities) {
-        const formattedDeptName = deptName.toUpperCase();
-        const formattedActivities = activities.replace(/^[-*•▪▫]\s*/gm, '▪️ ');
+        const formattedDeptName = escapeHtml(deptName.toUpperCase());
+        const formattedActivities = escapeHtml(activities).replace(/^[-*•▪▫]\s*/gm, '▪️ ');
 
-        reportLines.push(`📌 *${formattedDeptName}*`);
+        reportLines.push(`📌 <b>${formattedDeptName}</b>`);
         reportLines.push(formattedActivities);
         reportLines.push(''); // spacing line
       }
     }
 
     // Always append climate section
-    reportLines.push(`*SITUACIÓN CLIMÁTICA:* ${climaText || 'Sin reporte'}`);
+    reportLines.push(`<b>SITUACIÓN CLIMÁTICA:</b> ${escapeHtml(climaText || 'Sin reporte')}`);
     reportLines.push('');
 
     if (novedadesText) {
-      reportLines.push(`*NOVEDADES:* ${novedadesText}`);
+      reportLines.push(`<b>NOVEDADES:</b> ${escapeHtml(novedadesText)}`);
       reportLines.push('');
     }
 

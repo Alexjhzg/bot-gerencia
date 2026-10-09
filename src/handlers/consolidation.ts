@@ -4,6 +4,7 @@ import { getShiftStatus } from '../utils/shifts';
 import {
   getUserString,
   splitMessage,
+  escapeHtml,
 } from '../utils/report';
 
 /**
@@ -99,13 +100,30 @@ export async function consolidationHandler(ctx: BotContext) {
     const reportText = await sheetsService.getConsolidatedReport(isShift1, customDateStr);
     
     // Split the report into multiple messages if it exceeds Telegram's limit
-    const chunks = splitMessage(reportText, 4000);
+    const chunks = splitMessage(reportText, 3900);
     for (const chunk of chunks) {
-      await ctx.reply(chunk, { parse_mode: 'Markdown' });
+      try {
+        await ctx.reply(chunk, { parse_mode: 'HTML' });
+      } catch (sendError: any) {
+        const isParseError =
+          sendError?.message?.includes("can't parse entities") ||
+          sendError?.description?.includes("can't parse entities");
+        if (isParseError) {
+          console.warn(`[Bot] [Command] Error de parsing de entidades. Enviando sin formato como respaldo...`);
+          const plainText = chunk.replace(/<[^>]*>/g, '');
+          await ctx.reply(plainText);
+        } else {
+          throw sendError;
+        }
+      }
     }
     console.log(`[Bot] [Command] Consolidado enviado con éxito a ${user}`);
   } catch (error: any) {
     console.error(`[Bot] [Command] [Error] al generar consolidado para ${user}:`, error.message || error);
-    await ctx.reply(`❌ *Error al generar el consolidado:*\n${error.message || error}`, { parse_mode: 'Markdown' });
+    try {
+      await ctx.reply(`❌ <b>Error al generar el consolidado:</b>\n${escapeHtml(error.message || String(error))}`, { parse_mode: 'HTML' });
+    } catch {
+      await ctx.reply(`❌ Error al generar el consolidado:\n${error.message || error}`);
+    }
   }
 }

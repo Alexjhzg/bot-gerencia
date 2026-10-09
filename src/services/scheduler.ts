@@ -6,13 +6,26 @@ import { splitMessage } from '../utils/report';
 
 /**
  * Helper to send a message with automatic retry logic for transient network issues.
+ * Falls back to plain text if Telegram fails to parse HTML formatting entities.
  */
 async function sendMessageWithRetry(chatId: string, text: string, maxRetries = 3, delayMs = 3000) {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      await bot.api.sendMessage(chatId, text, { parse_mode: 'Markdown' });
+      await bot.api.sendMessage(chatId, text, { parse_mode: 'HTML' });
       return;
     } catch (error: any) {
+      const isParseError =
+        error?.message?.includes("can't parse entities") ||
+        error?.description?.includes("can't parse entities");
+      if (isParseError) {
+        console.warn(
+          `[Scheduler] Error de parsing de entidades al enviar reporte a ${chatId}. Enviando en texto plano como respaldo...`
+        );
+        const plainText = text.replace(/<[^>]*>/g, '');
+        await bot.api.sendMessage(chatId, plainText);
+        return;
+      }
+
       if (attempt === maxRetries) {
         throw error;
       }
@@ -41,7 +54,7 @@ export async function sendConsolidatedToManager(isShift1: boolean) {
     const sheetsService = SheetsService.getInstance();
     const reportText = await sheetsService.getConsolidatedReport(isShift1);
 
-    const chunks = splitMessage(reportText, 4000);
+    const chunks = splitMessage(reportText, 3900);
     for (const chatId of managerChatIds) {
       for (const chunk of chunks) {
         await sendMessageWithRetry(chatId, chunk);

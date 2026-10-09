@@ -1,6 +1,6 @@
 import { BotContext } from '../types/context';
 import { SheetsService } from '../services/sheets';
-import { getUserString } from '../utils/report';
+import { getUserString, escapeHtml } from '../utils/report';
 
 /**
  * Handler triggered by the "/unidades" command.
@@ -27,16 +27,24 @@ export async function unidadesHandler(ctx: BotContext) {
       throw new Error('No se encontraron unidades configuradas en la matriz.');
     }
 
-    const listStr = filteredDepts.map((d) => `• *${d.name}*`).join('\n');
+    const listStr = filteredDepts.map((d) => `• <b>${escapeHtml(d.name)}</b>`).join('\n');
     const responseMessage = 
-      `📋 *Unidades registradas en la matriz:*\n\n` +
+      `📋 <b>Unidades registradas en la matriz:</b>\n\n` +
       `${listStr}\n\n` +
-      `💡 _Estas son las unidades oficiales válidas para los reportes diarios._`;
+      `💡 <i>Estas son las unidades oficiales válidas para los reportes diarios.</i>`;
 
-    await ctx.reply(responseMessage, { parse_mode: 'Markdown' });
+    try {
+      await ctx.reply(responseMessage, { parse_mode: 'HTML' });
+    } catch {
+      await ctx.reply(responseMessage.replace(/<[^>]*>/g, ''));
+    }
     console.log(`[Bot] [Command] Lista de unidades enviada con éxito a ${user}`);
   } catch (error: any) {
     console.error(`[Bot] [Command] [Error] al obtener lista de unidades para ${user}:`, error.message || error);
-    await ctx.reply(`❌ *Error al obtener la lista de unidades:*\n${error.message || error}`, { parse_mode: 'Markdown' });
+    try {
+      await ctx.reply(`❌ <b>Error al obtener la lista de unidades:</b>\n${escapeHtml(error.message || String(error))}`, { parse_mode: 'HTML' });
+    } catch {
+      await ctx.reply(`❌ Error al obtener la lista de unidades:\n${error.message || error}`);
+    }
   }
 }

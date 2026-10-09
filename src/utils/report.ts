@@ -183,10 +183,21 @@ export function matchDepartment<T extends { name: string }>(
 }
 
 /**
+ * Escapes characters for Telegram HTML parse mode (&, <, >).
+ */
+export function escapeHtml(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+/**
  * Helper to split a long message into multiple line-safe chunks
  * to avoid Telegram API 400 Bad Request error (message is too long).
  */
-export function splitMessage(text: string, limit: number = 4000): string[] {
+export function splitMessage(text: string, limit: number = 3900): string[] {
   if (text.length <= limit) {
     return [text];
   }
@@ -202,12 +213,16 @@ export function splitMessage(text: string, limit: number = 4000): string[] {
         currentChunk = '';
       }
       if (line.length > limit) {
-        let tempLine = line;
-        while (tempLine.length > limit) {
-          chunks.push(tempLine.substring(0, limit));
-          tempLine = tempLine.substring(limit);
+        let remaining = line;
+        while (remaining.length > limit) {
+          let splitIdx = remaining.lastIndexOf(' ', limit);
+          if (splitIdx <= 0) {
+            splitIdx = limit;
+          }
+          chunks.push(remaining.substring(0, splitIdx).trim());
+          remaining = remaining.substring(splitIdx).trim();
         }
-        currentChunk = tempLine;
+        currentChunk = remaining;
       } else {
         currentChunk = line;
       }
@@ -220,7 +235,7 @@ export function splitMessage(text: string, limit: number = 4000): string[] {
     }
   }
 
-  if (currentChunk) {
+  if (currentChunk.trim()) {
     chunks.push(currentChunk.trim());
   }
 
