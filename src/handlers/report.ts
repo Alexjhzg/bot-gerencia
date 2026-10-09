@@ -8,7 +8,9 @@ import {
   getFormattedDate,
   normalizeText,
   matchDepartment,
+  escapeHtml,
 } from '../utils/report';
+import { checkReportLimits } from '../utils/limits';
 
 /**
  * Handler triggered when a message matches the "Reporte diario" or "📌Unidad:" regex.
@@ -95,21 +97,62 @@ export async function reportHandler(ctx: BotContext) {
       );
     }
 
-    // 4. Write each valid report directly to its corresponding matrix cell
-    const resultsSummary: string[] = [];
-
-    console.log(`[Bot] [Report] Procesando ${validatedReports.length} reporte(s) para el Turno ${isShift1 ? '1 (Mañana)' : '2 (Tarde)'} de: ${user}`);
-
-    for (const item of validatedReports) {
+    // 4. Pre-format activities and validate character limits per unit
+    const preparedReports = validatedReports.map((item) => {
       const departmentName = item.officialDeptMatch!;
       const rowIndex = item.officialRowIndex;
-      const activities = item.activities;
-
-      // Format activity with bullet points and metadata if required (we write raw activities directly to the cell)
-      const bulletedActivities = activities
+      const bulletedActivities = item.activities
         .split('\n')
         .map(line => `▪️ ${line}`)
         .join('\n');
+      return {
+        departmentName,
+        rowIndex,
+        bulletedActivities,
+      };
+    });
+
+    const limitViolations = checkReportLimits(
+      preparedReports.map(r => ({
+        departmentName: r.departmentName,
+        formattedActivities: r.bulletedActivities,
+      }))
+    );
+
+    if (limitViolations.length > 0) {
+      console.log(
+        `[Bot] [Report] [Rechazado por Límite] Reporte de ${user} excede longitud:`,
+        limitViolations.map(v => `${v.unitName}: ${v.currentChars}/${v.maxChars} (+${v.excess})`).join(', ')
+      );
+
+      try {
+        await ctx.react("👎");
+      } catch (reactError) {
+        console.error('Failed to react to message:', reactError);
+      }
+
+      let errorMsg = `⚠️ <b>El reporte excede el límite de caracteres permitido:</b>\n\n`;
+      for (const v of limitViolations) {
+        errorMsg += `📌 <b>${escapeHtml(v.unitName)}</b>\n`;
+        errorMsg += `• Caracteres actuales: <b>${v.currentChars}</b>\n`;
+        errorMsg += `• Límite permitido: <b>${v.maxChars} caracteres</b>\n`;
+        errorMsg += `• Exceso: <b>+${v.excess} caracteres</b>\n\n`;
+      }
+      errorMsg += `💡 <i>Para garantizar que el consolidado institucional viaje íntegro en un solo mensaje de Telegram, por favor sintetiza las actividades señaladas e inténtalo de nuevo.</i>`;
+
+      await ctx.reply(errorMsg, { parse_mode: 'HTML' });
+      return;
+    }
+
+    // 5. Write each valid report directly to its corresponding matrix cell
+    const resultsSummary: string[] = [];
+
+    console.log(`[Bot] [Report] Procesando ${preparedReports.length} reporte(s) para el Turno ${isShift1 ? '1 (Mañana)' : '2 (Tarde)'} de: ${user}`);
+
+    for (const item of preparedReports) {
+      const departmentName = item.departmentName;
+      const rowIndex = item.rowIndex;
+      const bulletedActivities = item.bulletedActivities;
 
       console.log(`[Bot] [Report] Guardando reporte en Google Sheets: Departamento "${departmentName}" (Fila ${rowIndex})`);
 
