@@ -1,89 +1,92 @@
-# Telegram Google Sheets Report Bot
+# Telegram Google Sheets Report Bot (`bot-gerencia`)
 
-Bot modular escrito en **TypeScript** con el framework **grammY** y la API oficial de **Google Sheets (`googleapis`)**, preparado para ser empaquetado en contenedores de **Docker**.
+![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178C6?logo=typescript&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-%3E%3D20-339933?logo=node.js&logoColor=white)
+![grammY](https://img.shields.io/badge/Telegram-grammY-26A5E4?logo=telegram&logoColor=white)
+![Google Sheets API](https://img.shields.io/badge/Google%20Sheets-API%20v4-34A853?logo=googlesheets&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Multi--Stage-2496ED?logo=docker&logoColor=white)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-## Funcionalidad del Bot
-
-El bot escucha mensajes que comiencen con `"Reporte diario"` y procesa la información de la siguiente manera:
-1. Extrae el nombre del departamento de la segunda línea (`+ Nombre`).
-2. Agrupa todas las actividades subsecuentes que inicien con un guion (`-`).
-3. Agrega una nueva fila en Google Sheets en la hoja y rango configurados con las columnas: `Fecha | Usuario | Departamento | Actividades`.
-
----
-
-## Requisitos Previos
-
-### 1. Bot de Telegram
-1. Habla con [@BotFather](https://t.me/BotFather) en Telegram y envía el comando `/newbot`.
-2. Sigue los pasos y copia el token de acceso (HTTP API Token). Este valor va en `TELEGRAM_BOT_TOKEN`.
-
-### 2. Cuenta de Servicio de Google (Google Service Account)
-Para que el bot pueda escribir datos en una hoja de Google Sheets sin requerir intervención humana (OAuth manual), usaremos una Cuenta de Servicio:
-
-1. Ve a [Google Cloud Console](https://console.cloud.google.com/).
-2. Crea un proyecto (o usa uno existente).
-3. Habilita la **Google Sheets API**:
-   - En el buscador superior escribe "Google Sheets API".
-   - Haz clic en ella y presiona **Habilitar**.
-4. Crea una Cuenta de Servicio (Service Account):
-   - Ve a **API y servicios** > **Credenciales**.
-   - Haz clic en **Crear credenciales** > **Cuenta de servicio**.
-   - Asigna un nombre (ej: `telegram-sheets-bot`) y haz clic en **Crear y continuar** y luego **Listo**.
-5. Genera la Clave Privada (JSON Key):
-   - Haz clic sobre la cuenta de servicio recién creada en la sección "Cuentas de servicio".
-   - Ve a la pestaña **Claves** (Keys).
-   - Haz clic en **Agregar clave** > **Crear clave nueva**. Selecciona el formato **JSON** y descárgala.
-6. Guarda los siguientes valores de ese archivo descargado:
-   - `client_email`: Este valor va en `GOOGLE_SERVICE_ACCOUNT_EMAIL`.
-   - `private_key`: Este valor va en `GOOGLE_PRIVATE_KEY` (copia la clave completa incluyendo las cabeceras `-----BEGIN PRIVATE KEY-----` y `-----END PRIVATE KEY-----`). En tu archivo `.env`, reemplaza los saltos de línea reales de la clave con caracteres literales `\n` y rodea la clave con comillas.
-7. **IMPORTANTE: Comparte tu Google Sheet:**
-   - Abre la hoja de cálculo de Google Sheets que vas a usar.
-   - Haz clic en el botón azul **Compartir** (esquina superior derecha).
-   - Añade el correo de tu cuenta de servicio (`client_email`) con permisos de **Editor**. De lo contrario, el bot recibirá un error 403 (Permission Denied).
+Bot modular de producción escrito en **TypeScript** con **grammY** y **Google Sheets API v4** que automatiza la ingesta, validación, almacenamiento matricial y consolidación programada de reportes diarios institucionales desde Telegram.
 
 ---
 
-## Configuración del Entorno Local
+## Características Principales
 
-1. Copia la plantilla de entorno:
-   ```bash
-   cp .env.example .env
-   ```
-2. Completa los valores de tu `.env` con las credenciales que obtuviste en los pasos anteriores.
-3. Copia el ID de tu hoja de Google Sheets (se encuentra en la URL: `https://docs.google.com/spreadsheets/d/TU_ID_DE_HOJA/edit`) y asígnalo en `GOOGLE_SHEET_ID`.
-
----
-
-## Desarrollo Local sin Docker
-
-1. Instalar dependencias locales:
-   ```bash
-   npm install
-   ```
-2. Ejecutar las pruebas del parser local:
-   ```bash
-   npm run test-parse
-   ```
-3. Iniciar el bot en modo desarrollo (recarga automática con nodemon):
-   ```bash
-   npm run dev
-   ```
+- **Almacenamiento en Matriz Bidimensional (`Reportes_unificados`):** Registra actividades en la intersección exacta de *Unidad (fila)* × *Fecha/Turno (columna)* con soporte de sobrescritura para correcciones (`Guardado ✅` / `Corregido 🔄`).
+- **Expansión Dinámica de Cuadrícula:** Crea automáticamente bloques de 2 columnas por día (`12:00M` y `5:30PM`), combina encabezados de fecha y redimensiona `gridProperties.columnCount` en Google Sheets sin intervención manual.
+- **Validación Atómica y Coincidencia Difusa:** Procesa reportes de una o múltiples unidades en un mismo mensaje; si una unidad es inválida o excede su cuota de caracteres, rechaza el lote completo con feedback guiado.
+- **Presupuesto de Caracteres para Telegram:** Cuotas configurables por unidad (`src/utils/limits.ts`) y particionamiento seguro (`splitMessage`) para garantizar consolidados íntegros dentro del límite de 4.096 caracteres.
+- **Consolidación Automática (`node-cron`):** Envía reportes consolidados a gerencia al cierre de cada turno (`12:31` y `17:30`, `America/Caracas`) con reintentos y fallback a texto plano.
+- **Modo Silencioso y RBAC Opcional:** Ignora conversaciones normales en grupos y permite restringir el acceso mediante lista blanca (`ALLOWED_CHAT_IDS`).
+- **Listo para Producción:** Contenedor Docker multi-etapa con usuario no-root (`node`), servidor HTTP de salud (`/`, `/health`) y apagado controlado (`SIGINT`/`SIGTERM`).
 
 ---
 
-## Despliegue con Docker (Recomendado)
+## Arquitectura
 
-El proyecto incluye un `Dockerfile` multi-etapa optimizado que no ejecuta como `root` y un archivo `docker-compose.yml`.
+```mermaid
+flowchart LR
+    TG["Telegram Bot API\n(grammY Long Polling)"] <--> BOT["bot.ts + Handlers\n(report, consolidation, unidades, estatus)"]
+    CRON["node-cron\n(12:31 / 17:30)"] --> SVC["SheetsService\n(Singleton Facade)"]
+    BOT --> UTILS["Utils Puros\n(parser, fuzzy match, shifts, limits)"]
+    BOT --> SVC
+    SVC <--> GS["Google Sheets API v4\n(Reportes_unificados)"]
+    MON["Render / Koyeb / UptimeRobot"] -->|GET /health| HTTP["HTTP Server (:8080)"]
+```
 
-1. Levantar y compilar el contenedor en segundo plano:
-   ```bash
-   docker compose up -d --build
-   ```
-2. Ver logs de la aplicación:
-   ```bash
-   docker compose logs -f
-   ```
-3. Detener la aplicación:
-   ```bash
-   docker compose down
-   ```
+---
+
+## Comandos del Bot
+
+| Comando | Alias | Descripción |
+| :--- | :--- | :--- |
+| `/start` | — | Muestra bienvenida e instrucciones de formato. |
+| `/reporte [turno] [fecha]` | `/reportes` | Genera el consolidado del turno activo, turno específico (`1`/`2`) o fecha histórica (`DD/MM/YYYY`). |
+| `/estatus` | — | Lista unidades que ya reportaron y pendientes del turno activo. |
+| `/unidades` | — | Muestra las unidades autorizadas y sus límites de caracteres. |
+| `/id` | `/myid` | Devuelve el `chat.id` de Telegram del usuario o grupo. |
+
+---
+
+## Inicio Rápido
+
+### 1. Variables de Entorno
+```bash
+cp .env.example .env
+```
+Configura `TELEGRAM_BOT_TOKEN`, `GOOGLE_SHEET_ID`, `GOOGLE_SERVICE_ACCOUNT_EMAIL`, `GOOGLE_PRIVATE_KEY` y opcionalmente `MANAGER_CHAT_ID`, `ALLOWED_CHAT_IDS` y `REPORT_HEADER_TITLE`.
+
+### 2. Desarrollo Local
+```bash
+npm install
+npm run lint
+npm run typecheck
+npm run test-parse
+npm run dev
+```
+
+### 3. Despliegue con Docker
+```bash
+docker compose up -d --build
+docker compose logs -f
+```
+
+---
+
+## Documentación Técnica
+
+- [PRD (Requisitos del Producto)](./docs/PRD.md)
+- [Arquitectura y ADRs](./docs/ARCHITECTURE.md)
+- [Modelo de Datos (Google Sheets)](./docs/database_model.md)
+- [API y Comandos](./docs/API.md)
+- [Design System Conversacional](./docs/DESIGN_SYSTEM.md)
+- [Guía de Estilo de Código](./docs/CODE_STYLE.md)
+- [Política de Seguridad](./SECURITY.md)
+- [Lógica de Negocio](./LOGICA_NEGOCIO.md) · [Manual de Usuario](./MANUAL_USUARIO.md)
+
+---
+
+## Licencia
+
+Distribuido bajo la licencia [MIT](./LICENSE).

@@ -5,4 +5,7 @@ dist/
 npm-debug.log*
 .DS_Store
 *.xlsx
-acividades-d87dfb92891b.json
+*.json
+!package.json
+!package-lock.json
+!tsconfig.json

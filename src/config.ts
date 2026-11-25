@@ -19,6 +19,7 @@ export interface Config {
   shift2Limit: string; // e.g. "17:00"
   managerChatIds: string[];
   allowedChatIds: string[];
+  reportHeaderTitle: string;
 }
 
 function getEnvOrThrow(key: string): string {
@@ -61,5 +62,6 @@ export const config: Config = {
       ...parseChatIds(process.env.ACTING_MANAGER_CHAT_ID),
     ])
   ),
+  reportHeaderTitle: process.env.REPORT_HEADER_TITLE?.trim() || 'MONAGAS',
 };
 

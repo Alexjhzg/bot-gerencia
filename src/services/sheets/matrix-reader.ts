@@ -105,7 +105,7 @@ export async function getConsolidatedReport(isShift1: boolean, customDateStr?: s
     const shiftHeader = isShift1 ? '1ER REPORTE 12:00M' : '2DO REPORTE 5:30PM';
 
     const reportLines: string[] = [
-      '<b>MONAGAS</b>',
+      `<b>${escapeHtml(config.reportHeaderTitle)}</b>`,
       '',
       `<b>${escapeHtml(spanishDateStr)}</b>`,
       '',
