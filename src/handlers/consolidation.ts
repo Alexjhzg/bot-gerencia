@@ -17,8 +17,8 @@ function parseUserQueryDate(dateStr: string): string {
     throw new Error('El formato debe ser DD/MM/YYYY (ej. 30/06/2026).');
   }
 
-  let day = parseInt(parts[0], 10);
-  let month = parseInt(parts[1], 10);
+  const day = parseInt(parts[0], 10);
+  const month = parseInt(parts[1], 10);
   let year = parseInt(parts[2], 10);
 
   if (isNaN(day) || isNaN(month) || isNaN(year)) {
@@ -70,7 +70,7 @@ export async function consolidationHandler(ctx: BotContext) {
         try {
           customDateStr = parseUserQueryDate(trimmed);
         } catch (e: any) {
-          throw new Error(`Fecha inválida "${trimmed}": ${e.message}`);
+          throw new Error(`Fecha inválida "${trimmed}": ${e.message}`, { cause: e });
         }
       } else if (trimmed === '1' || trimmed.toLowerCase().includes('12') || trimmed.toLowerCase().includes('m')) {
         isShift1 = true;

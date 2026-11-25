@@ -23,7 +23,7 @@ export async function reportHandler(ctx: BotContext) {
   // Silent Filter (Group chat protection):
   // Ignore messages starting with + or 📌 that do not contain "reporte diario" and have no lines starting with bullet points.
   const hasReportDiario = /reporte diario/i.test(text);
-  const hasBullets = /^[-*•▪️▪▫\u25AA\uFE0F\u25FC\u25FD\u25FE\u25FF\u2B1B\u2B1C\u2B1D\u2B1E]/mu.test(text);
+  const hasBullets = /^(?:▪️|[-*•▪▫\u25AA\u25FC\u25FD\u25FE\u25FF\u2B1B\u2B1C\u2B1D\u2B1E])/mu.test(text);
 
   if (!hasReportDiario && !hasBullets) {
     return;

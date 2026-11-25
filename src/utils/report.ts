@@ -52,10 +52,10 @@ export function parseReportMessage(text: string): ParsedReport[] {
     }
 
     // Detect Activity Bullet (supports normal bullets, stars, and various squares)
-    const bulletRegex = /^[-*•▪️▪▫\u25AA\uFE0F\u25FC\u25FD\u25FE\u25FF\u2B1B\u2B1C\u2B1D\u2B1E]/u;
+    const bulletRegex = /^(?:▪️|[-*•▪▫\u25AA\u25FC\u25FD\u25FE\u25FF\u2B1B\u2B1C\u2B1D\u2B1E])/u;
     if (bulletRegex.test(line)) {
       const activityText = line
-        .replace(/^[-*•▪️▪▫\u25AA\uFE0F\u25FC\u25FD\u25FE\u25FF\u2B1B\u2B1C\u2B1D\u2B1E\s]+/u, '')
+        .replace(/^(?:▪️|[-*•▪▫\u25AA\u25FC\u25FD\u25FE\u25FF\u2B1B\u2B1C\u2B1D\u2B1E\s])+/u, '')
         .trim();
       if (currentDept && activityText) {
         currentActivities.push(activityText);
@@ -210,7 +210,6 @@ export function splitMessage(text: string, limit: number = 3900): string[] {
     if (currentChunk.length + line.length + 1 > limit) {
       if (currentChunk) {
         chunks.push(currentChunk.trim());
-        currentChunk = '';
       }
       if (line.length > limit) {
         let remaining = line;

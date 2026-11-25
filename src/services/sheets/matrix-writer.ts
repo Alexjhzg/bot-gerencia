@@ -61,7 +61,10 @@ export async function writeMatrixReport(
       // Get the sheetId and current columnCount of matrix sheet
       const sheetMetadata = await sheets.spreadsheets.get({ spreadsheetId });
       const targetSheet = sheetMetadata.data.sheets?.find((s: any) => s.properties?.title === MATRIX_SHEET_NAME);
-      const sheetId = targetSheet?.properties?.sheetId!;
+      const sheetId = targetSheet?.properties?.sheetId;
+      if (sheetId == null) {
+        throw new Error(`Sheet "${MATRIX_SHEET_NAME}" not found in spreadsheet.`);
+      }
       const currentColumnCount = targetSheet?.properties?.gridProperties?.columnCount || 26;
 
       // Check if we need to resize the sheet columns count to avoid grid limits error
@@ -155,6 +158,6 @@ export async function writeMatrixReport(
     return { isOverwrite };
   } catch (error: any) {
     console.error('[SheetsService] Error writing matrix report:', error);
-    throw new Error(`Google Sheets API Matrix Error: ${error.message || error}`);
+    throw new Error(`Google Sheets API Matrix Error: ${error.message || error}`, { cause: error });
   }
 }

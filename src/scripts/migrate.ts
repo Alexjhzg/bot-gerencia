@@ -50,9 +50,17 @@ async function main() {
         ],
       },
     });
-    destinationSheetId = addSheetRes.data.replies?.[0]?.addSheet?.properties?.sheetId!;
+    const createdSheetId = addSheetRes.data.replies?.[0]?.addSheet?.properties?.sheetId;
+    if (createdSheetId == null) {
+      throw new Error('[Migration] Failed to retrieve sheetId for newly created "Reportes" sheet.');
+    }
+    destinationSheetId = createdSheetId;
   } else {
-    destinationSheetId = existingSheet.properties?.sheetId!;
+    const existingSheetId = existingSheet.properties?.sheetId;
+    if (existingSheetId == null) {
+      throw new Error('[Migration] Failed to retrieve sheetId for existing "Reportes" sheet.');
+    }
+    destinationSheetId = existingSheetId;
     console.log('[Migration] "Reportes" sheet exists. Clearing previous data & merges...');
     
     // Clear old values

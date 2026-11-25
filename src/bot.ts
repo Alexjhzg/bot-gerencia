@@ -15,6 +15,33 @@ bot.use(async (ctx, next) => {
   console.log(`[Bot] Update ID ${ctx.update.update_id} processed in ${ms}ms`);
 });
 
+// Optional RBAC / Allowlist middleware (active when ALLOWED_CHAT_IDS is configured)
+const hasExplicitAllowlist = Boolean(process.env.ALLOWED_CHAT_IDS?.trim());
+if (hasExplicitAllowlist) {
+  const allowedSet = new Set(config.allowedChatIds);
+  bot.use(async (ctx, next) => {
+    const text = ctx.message?.text?.trim() || '';
+    // Allow /id and /myid so operators can obtain their Telegram Chat ID
+    if (/^\/(id|myid)(@\w+)?(\s|$)/i.test(text)) {
+      return next();
+    }
+
+    const chatId = ctx.chat?.id !== undefined ? String(ctx.chat.id) : '';
+    const userId = ctx.from?.id !== undefined ? String(ctx.from.id) : '';
+
+    if (allowedSet.has(chatId) || allowedSet.has(userId)) {
+      return next();
+    }
+
+    console.warn(
+      `[Bot] [Security] Acceso denegado para ${getUserString(ctx)} en chat ${chatId || 'desconocido'}.`
+    );
+    if (ctx.chat?.type === 'private') {
+      await ctx.reply('⛔ No tienes autorización para usar este bot.');
+    }
+  });
+}
+
 // /start command explaining the usage of the bot
 bot.command('start', async (ctx) => {
   const user = getUserString(ctx);

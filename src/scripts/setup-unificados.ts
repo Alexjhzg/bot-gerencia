@@ -38,7 +38,10 @@ async function setupUnificados() {
     console.log(`[Setup] Hoja "${MATRIX_SHEET_NAME}" creada exitosamente.`);
   }
 
-  const sheetIdNum = targetSheet?.properties?.sheetId!;
+  const sheetIdNum = targetSheet?.properties?.sheetId;
+  if (sheetIdNum == null) {
+    throw new Error(`No se pudo obtener el sheetId de "${MATRIX_SHEET_NAME}".`);
+  }
 
   console.log(`[Setup] Limpiando datos previos en "${MATRIX_SHEET_NAME}"...`);
   await sheets.spreadsheets.values.clear({

@@ -18,6 +18,7 @@ export interface Config {
   shift1Limit: string; // e.g. "12:30"
   shift2Limit: string; // e.g. "17:00"
   managerChatIds: string[];
+  allowedChatIds: string[];
 }
 
 function getEnvOrThrow(key: string): string {
@@ -49,6 +50,13 @@ export const config: Config = {
   shift2Limit: process.env.SHIFT_2_LIMIT || '17:30',
   managerChatIds: Array.from(
     new Set([
+      ...parseChatIds(process.env.MANAGER_CHAT_ID),
+      ...parseChatIds(process.env.ACTING_MANAGER_CHAT_ID),
+    ])
+  ),
+  allowedChatIds: Array.from(
+    new Set([
+      ...parseChatIds(process.env.ALLOWED_CHAT_IDS),
       ...parseChatIds(process.env.MANAGER_CHAT_ID),
       ...parseChatIds(process.env.ACTING_MANAGER_CHAT_ID),
     ])

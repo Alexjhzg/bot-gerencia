@@ -4,7 +4,11 @@
   "description": "Telegram Bot for daily report ingestion into Google Sheets using grammY, TypeScript, and Docker",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "rm -rf dist && tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint \"src/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\"",
     "start": "node dist/index.js",
     "dev": "nodemon --watch src --ext ts --exec ts-node src/index.ts",
     "test-parse": "ts-node src/scripts/test-parser.ts"
@@ -17,11 +21,16 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/node": "^20.14.9",
     "@types/node-cron": "^3.0.11",
+    "eslint": "^10.15.0",
+    "eslint-config-prettier": "^10.1.8",
     "nodemon": "^3.1.4",
+    "prettier": "^3.10.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.5.2"
+    "typescript": "^5.5.2",
+    "typescript-eslint": "^8.74.0"
   },
   "engines": {
     "node": ">=20.0.0"

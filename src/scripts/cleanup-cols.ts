@@ -15,7 +15,10 @@ async function main() {
   // Find sheet ID of 'Reportes'
   const sheetMetadata = await sheets.spreadsheets.get({ spreadsheetId });
   const targetSheet = sheetMetadata.data.sheets?.find(s => s.properties?.title === 'Reportes');
-  const sheetId = targetSheet?.properties?.sheetId!;
+  const sheetId = targetSheet?.properties?.sheetId;
+  if (sheetId == null) {
+    throw new Error('No se encontró la hoja "Reportes".');
+  }
 
   console.log('Resetting columns limit of "Reportes" back to 51...');
   await sheets.spreadsheets.batchUpdate({

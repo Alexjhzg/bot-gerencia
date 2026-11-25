@@ -104,7 +104,7 @@ export async function getConsolidatedReport(isShift1: boolean, customDateStr?: s
     const spanishDateStr = formatSpanishDateFromMatrix(actualDateHeader || searchDateStr);
     const shiftHeader = isShift1 ? '1ER REPORTE 12:00M' : '2DO REPORTE 5:30PM';
 
-    let reportLines: string[] = [
+    const reportLines: string[] = [
       '<b>MONAGAS</b>',
       '',
       `<b>${escapeHtml(spanishDateStr)}</b>`,
@@ -125,13 +125,13 @@ export async function getConsolidatedReport(isShift1: boolean, customDateStr?: s
       // Special rows handling
       if (deptName.toUpperCase().includes('CLIMATICA') || deptName.toUpperCase().includes('CLIMÁTICA')) {
         if (activities) {
-          climaText = activities.replace(/^[-*•▪️▪▫]\s*/gm, '');
+          climaText = activities.replace(/^(?:▪️|[-*•▪▫])\s*/gm, '');
         }
         continue;
       }
       if (deptName.toUpperCase().includes('NOVEDADES')) {
         if (activities) {
-          novedadesText = activities.replace(/^[-*•▪️▪▫]\s*/gm, '');
+          novedadesText = activities.replace(/^(?:▪️|[-*•▪▫])\s*/gm, '');
         }
         continue;
       }
